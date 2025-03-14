@@ -1,0 +1,16 @@
+export enum PontosTPE {
+  "01 - TERMINAL INTERURBANO" = "01 - TERMINAL INTERURBANO Av. Advogado Horácio Raccanello Filho - Zona 7, Maringá - PR, 87020-035",
+  "02 - LOJA LI'S BEAUTY" = "02 - LOJA LI'S BEAUTY Av. Brasil, 3492 - Zona 01, Maringá - PR, 87013-000 ",
+  "03 - ANTIGO BANCO BRADESCO" = "03 - ANTIGO BANCO BRADESCO Av. Brasil, 3120 - Zona 01, Maringá - PR, 87030-025",
+  "04 - SHOPPING AVENIDA CENTER" = "04 - SHOPPING AVENIDA CENTER Av. São Paulo, 743 - Centro, Maringá - PR, 87020-035",
+  "05 - SHOPPING MARINGÁ PARK" = "05 - SHOPPING MARINGÁ PARK Av. São Paulo, 1099 - Zona 01, Maringá - PR, 87013-040",
+  "06 - MIX PERFUMARIA" = "06 - MIX PERFUMARIA  Av. Brasil, 3342 - Centro, Maringá - PR, 87013-000",
+  "07 - TERMINAL RODOVIÁRIO DE MARINGÁ" = "07 - TERMINAL RODOVIÁRIO DE MARINGÁ Av. Tuiuti, 180 - Zona 08, Maringá - PR, 87040-360",
+  "08 - FEIRA DO PRODUTOR" = "08 - FEIRA DO PRODUTOR  Av. Prudente de Morais - Zona 7, Maringá - PR, 87013-260",
+  "09 - PARQUE DO INGÁ #1" = "09 - PARQUE DO INGÁ #1 Av. São Paulo, 1086 - Zona 01, Maringá - PR, 87013-040",
+  "09 - PARQUE DO INGÁ #2" = "09 - PARQUE DO INGÁ #2 Av. São Paulo, 1086 - Zona 01, Maringá - PR, 87013-040",
+  "09 - PARQUE DO INGÁ #3" = "09 - PARQUE DO INGÁ #3 Av. São Paulo, 1086 - Zona 01, Maringá - PR, 87013-040",
+  "09 - PARQUE DO INGÁ #4" = "09 - PARQUE DO INGÁ #4 Av. São Paulo, 1086 - Zona 01, Maringá - PR, 87013-040",
+  "09 - PARQUE DO INGÁ #5" = "09 - PARQUE DO INGÁ #5 Av. São Paulo, 1086 - Zona 01, Maringá - PR, 87013-040",
+  "01 - CONFEITEMOS" = "Confeitemos",
+}
