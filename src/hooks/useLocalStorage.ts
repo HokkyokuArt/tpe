@@ -1,3 +1,8 @@
+export enum LocalStorageKeys {
+  PESSOAS = "pessoas",
+  PONTOS = "pontos",
+}
+
 const useLocalStorage = () => {
   return {
     get: <T>(key: string): T | null => {

@@ -3,9 +3,9 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Box, Button, Link, Typography } from '@mui/joy';
 import { Document, Font, Image, Line, Page, PDFViewer, StyleSheet, Svg, Text, View } from '@react-pdf/renderer';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { State } from '../pages/gerador-convite/GeradorConvite';
-import { getRows } from '../utils/utils';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import useGeradorConvite, { GeradorData } from '../pages/gerador-convite/useGeradorConvite';
 
 const verde = '#037347';
 const cinza = '#7F7F7F';
@@ -167,297 +167,321 @@ const s = StyleSheet.create({
     },
 });
 
-
-type Props = {
-    state: State;
-    setState: Dispatch<SetStateAction<State>>;
+type State = {
+    index: number;
+    planilha: string | null;
+    rows: GeradorData[];
+    row: GeradorData | null;
 };
 
-const PdfTemplate = ({ state, setState }: Props) => {
+const initialSate: State = {
+    index: 0,
+    planilha: null,
+    rows: [],
+    row: null,
+};
 
-    const [rows, setRows] = useState(getRows(state.planilha));
-
-    const row = rows[state.index];
+const PdfTemplate = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { getData } = useGeradorConvite();
+    const [state, setState] = useState(initialSate);
 
     useEffect(() => {
-        setRows(getRows(state.planilha));
-    }, [state.planilha]);
+        const locaTionState = location.state;
+        if (!locaTionState) return navigate('/');
+        setState(prev => {
+            const rows = getData(locaTionState.planilha);
+            return {
+                ...prev,
+                planilha: locaTionState.planilha,
+                rows,
+                row: rows[prev.index]
+            };
+        });
+    }, []);
 
-
-    return (<>
-        <Box sx={{
-            userSelect: 'none',
-            zIndex: 100000,
-            position: 'absolute',
-            top: 100,
-            left: 15,
-            background: '#888888',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column'
-        }}>
-
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    gap: '10px',
-                }}>
-                <Typography>{row.pub1.nome}:</Typography> <Link target='_blank' href={row.pub1.numeroLink}>{row.pub1.numero}</Link>
-            </Box>
-
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    gap: '10px',
-                }}>
-                <Typography>{row.pub2.nome}:</Typography> <Link target='_blank' href={row.pub2.numeroLink}>{row.pub2.numero}</Link>
-            </Box>
-        </Box>
-
-        <Box sx={{
-            userSelect: 'none',
-            zIndex: 100000,
-            position: 'absolute',
-            width: '100vw',
-            bottom: 20,
-        }}>
-
-            <Box
-                sx={{
-                    position: 'relative',
-                    width: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '10px',
-                }}
-            >
-                <Box
-                    sx={{
+    return (
+        <>
+            {!state.row ?
+                <></>
+                :
+                <>
+                    <Box sx={{
+                        userSelect: 'none',
+                        zIndex: 100000,
                         position: 'absolute',
+                        top: 100,
+                        left: 15,
+                        background: '#888888',
+                        padding: '20px',
                         display: 'flex',
-                        left: 0,
-                        background: 'aqua',
-                        width: '100px',
-                        height: '60px',
-                        borderRadius: '0 30px 30px 0',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <Typography>{state.index + 1} / {rows.length}</Typography>
-                </Box>
+                        flexDirection: 'column'
+                    }}>
 
-                <Button
-                    sx={{
-                        borderRadius: '30px 5px 5px 30px'
-                    }}
-                    disabled={state.index === 0}
-                    color='success'
-                    onClick={() => setState(prev => ({ ...prev, index: prev.index - 1 }))}
-                >
-                    <NavigateBeforeIcon sx={{ color: '#fff', fontSize: 45 }} />
-                </Button>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                gap: '10px',
+                            }}>
+                            <Typography>{state.row.pub1.nome}:</Typography> <Link target='_blank' href={state.row.pub1.numeroLink}>{state.row.pub1.numero}</Link>
+                        </Box>
 
-                <Button
-                    sx={{
-                        borderRadius: '5px'
-                    }}
-                    color='danger'
-                    onClick={() => setState(prev => ({ ...prev, index: 0, openPdf: false }))}
-                >
-                    <CloseIcon sx={{ color: '#fff', fontSize: 45 }} />
-                </Button>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                gap: '10px',
+                            }}>
+                            <Typography>{state.row.pub2.nome}:</Typography> <Link target='_blank' href={state.row.pub2.numeroLink}>{state.row.pub2.numero}</Link>
+                        </Box>
+                    </Box>
+
+                    <Box sx={{
+                        userSelect: 'none',
+                        zIndex: 100000,
+                        position: 'absolute',
+                        width: '100vw',
+                        bottom: 20,
+                    }}>
+
+                        <Box
+                            sx={{
+                                position: 'relative',
+                                width: '100%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '10px',
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    display: 'flex',
+                                    left: 0,
+                                    background: 'aqua',
+                                    width: '100px',
+                                    height: '60px',
+                                    borderRadius: '0 30px 30px 0',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <Typography>{state.index + 1} / {state.rows.length}</Typography>
+                            </Box>
+
+                            <Button
+                                sx={{
+                                    borderRadius: '30px 5px 5px 30px'
+                                }}
+                                disabled={state.index === 0}
+                                color='success'
+                                onClick={() => setState(prev => ({ ...prev, index: prev.index - 1 }))}
+                            >
+                                <NavigateBeforeIcon sx={{ color: '#fff', fontSize: 45 }} />
+                            </Button>
+
+                            <Button
+                                sx={{
+                                    borderRadius: '5px'
+                                }}
+                                color='danger'
+                                onClick={() => navigate('/')}
+                            >
+                                <CloseIcon sx={{ color: '#fff', fontSize: 45 }} />
+                            </Button>
 
 
-                <Button
-                    sx={{
-                        borderRadius: '5px 30px 30px 5px'
-                    }}
-                    disabled={state.index === rows.length - 1}
-                    color='success'
-                    onClick={() => setState(prev => ({ ...prev, index: prev.index + 1 }))}>
+                            <Button
+                                sx={{
+                                    borderRadius: '5px 30px 30px 5px'
+                                }}
+                                disabled={state.index === state.rows.length - 1}
+                                color='success'
+                                onClick={() => setState(prev => ({ ...prev, index: prev.index + 1 }))}>
 
-                    <NavigateNextIcon sx={{ color: '#fff', fontSize: 45 }} />
-                </Button>
-            </Box>
-        </Box>
+                                <NavigateNextIcon sx={{ color: '#fff', fontSize: 45 }} />
+                            </Button>
+                        </Box>
+                    </Box>
 
-        <PDFViewer
-            style={s.pdfView}
-            showToolbar={true}
-        >
-            <Document
-                title={`${row.data.mes}${row.data.dia}${row.data.anoSimples}${row.horario.inicioSimples}${row.horario.fimSimples}_${row.pub1.firstNome.toLocaleLowerCase()}_${row.pub2.firstNome.toLocaleLowerCase()}`}
-                author={'Jean Artico'}
-                language='pt-BR'
-            >
-                <Page
-                    size={'A4'}
-                    orientation='portrait'
-                    wrap={true}
-                    style={s.page}
-                >
+                    <PDFViewer
+                        style={s.pdfView}
+                        showToolbar={true}
+                    >
+                        <Document
+                            title={`${state.row.data.mes}${state.row.data.dia}${state.row.data.anoSimples}${state.row.horario.inicioSimples}${state.row.horario.fimSimples}_${state.row.pub1.firstNome.toLocaleLowerCase()}_${state.row.pub2.firstNome.toLocaleLowerCase()}`}
+                            author={'Jean Artico'}
+                            language='pt-BR'
+                        >
+                            <Page
+                                size={'A4'}
+                                orientation='portrait'
+                                wrap={true}
+                                style={s.page}
+                            >
 
-                    <View style={s.wrapper}>
+                                <View style={s.wrapper}>
 
-                        <Svg height={20}>
-                            <Line x1={-10} x2={363} y1={0} y2={0} strokeWidth={30}
-                                stroke={verde} />
-                        </Svg>
+                                    <Svg height={20}>
+                                        <Line x1={-10} x2={363} y1={0} y2={0} strokeWidth={30}
+                                            stroke={verde} />
+                                    </Svg>
 
-                        <Text style={s.title}>
-                            Testemunho Público Especial
-                        </Text>
-
-                        <Text style={s.subtitle}>
-                            Em Regiões Metropolitanas | Maringá – PR
-                        </Text>
-
-                        <Text style={s.conviteTitle}>
-                            <Text style={s.conviteTitleFirstLetter}>C</Text>ONVITE <Text style={s.conviteTitleFirstLetter}>D</Text>ESIGNAÇÃO
-                        </Text>
-
-                        <Text style={s.conviteDescricao}>
-                            Querido irmão (a), <Text style={s.grifado}>você está recebendo essa designação para trabalhar no Testemunho Público Especial da cidade de Maringá – PR</Text>.
-                        </Text>
-
-                        <Text style={s.conviteDescricao}>
-                            Para saber os detalhes como <Text style={s.grifado}>nome do seu ajudante</Text>, <Text style={s.grifado}>local onde deverá trabalhar</Text>, <Text style={s.grifado}>horário</Text> e <Text style={s.grifado}>onde deve retirar o carrinho</Text> e <Text style={s.grifado}>entrega-lo</Text>, poderá dar atenção as informações abaixo.
-                        </Text>
-
-                        {/* wrapper body */}
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '15px 3px' }}>
-
-                            {/* wrapper text */}
-                            <View style={s.wrapperText}>
-
-                                {/* pub1 */}
-                                <View style={s.linha}>
-                                    <Text style={s.keyPub}>
-                                        Publicador 1:
+                                    <Text style={s.title}>
+                                        Testemunho Público Especial
                                     </Text>
 
-                                    <Text style={s.valuePub}>
-                                        {row.pub1.descritivo}
-                                    </Text>
-                                </View>
-
-                                <View style={s.linha}>
-                                    <Text style={s.keyWpp}>
-                                        WhatsApp:
+                                    <Text style={s.subtitle}>
+                                        Em Regiões Metropolitanas | Maringá – PR
                                     </Text>
 
-                                    <Text style={{ ...s.valueWpp, ...s.marginBotton }}>
-                                        {row.pub1.numero}
-                                    </Text>
-                                </View>
-
-                                {/* pub2 */}
-                                <View style={s.linha}>
-                                    <Text style={s.keyPub}>
-                                        Publicador 2:
+                                    <Text style={s.conviteTitle}>
+                                        <Text style={s.conviteTitleFirstLetter}>C</Text>ONVITE <Text style={s.conviteTitleFirstLetter}>D</Text>ESIGNAÇÃO
                                     </Text>
 
-                                    <Text style={s.valuePub}>
-                                        {row.pub2.descritivo}
-                                    </Text>
-                                </View>
-
-                                <View style={s.linha}>
-                                    <Text style={s.keyWpp}>
-                                        WhatsApp:
+                                    <Text style={s.conviteDescricao}>
+                                        Querido irmão (a), <Text style={s.grifado}>você está recebendo essa designação para trabalhar no Testemunho Público Especial da cidade de Maringá – PR</Text>.
                                     </Text>
 
-                                    <Text style={{ ...s.valueWpp, ...s.marginBotton }}>
-                                        {row.pub2.numero}
-                                    </Text>
-                                </View>
-
-                                <View style={s.linha}>
-                                    <Text style={s.keyPub}>
-                                        Data:
+                                    <Text style={s.conviteDescricao}>
+                                        Para saber os detalhes como <Text style={s.grifado}>nome do seu ajudante</Text>, <Text style={s.grifado}>local onde deverá trabalhar</Text>, <Text style={s.grifado}>horário</Text> e <Text style={s.grifado}>onde deve retirar o carrinho</Text> e <Text style={s.grifado}>entrega-lo</Text>, poderá dar atenção as informações abaixo.
                                     </Text>
 
-                                    <Text style={s.valuePub}>
-                                        {row.data.descritivo}
-                                    </Text>
-                                </View>
+                                    {/* wrapper body */}
+                                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '15px 3px' }}>
 
-                                <View style={s.linha}>
-                                    <Text style={s.keyPub}>
-                                        Horário:
-                                    </Text>
+                                        {/* wrapper text */}
+                                        <View style={s.wrapperText}>
 
-                                    <Text style={{ ...s.valuePub, ...s.marginBotton }}>
-                                        {row.horario.inicio} até {row.horario.fim}
-                                    </Text>
-                                </View>
+                                            {/* pub1 */}
+                                            <View style={s.linha}>
+                                                <Text style={s.keyPub}>
+                                                    Publicador 1:
+                                                </Text>
 
-                                <View style={s.linhaQuebrada}>
-                                    <Text style={s.keyPub}>
-                                        Local onde trabalhar:
-                                    </Text>
+                                                <Text style={s.valuePub}>
+                                                    {state.row.pub1.descritivo}
+                                                </Text>
+                                            </View>
 
-                                    <Text style={{ ...s.valuePequeno, ...s.marginBotton }}>
-                                        {row.ponto}
-                                    </Text>
-                                </View>
+                                            <View style={s.linha}>
+                                                <Text style={s.keyWpp}>
+                                                    WhatsApp:
+                                                </Text>
 
-                                <View style={s.linhaQuebrada}>
-                                    <Text style={s.keyPub}>
-                                        Senha para abrir a porta:
-                                    </Text>
+                                                <Text style={{ ...s.valueWpp, ...s.marginBotton }}>
+                                                    {state.row.pub1.numero}
+                                                </Text>
+                                            </View>
 
-                                    <Text style={{ ...s.valuePequeno, ...s.marginBotton }}>
-                                        2414#
-                                    </Text>
-                                </View>
+                                            {/* pub2 */}
+                                            <View style={s.linha}>
+                                                <Text style={s.keyPub}>
+                                                    Publicador 2:
+                                                </Text>
 
-                                <View style={s.linhaQuebrada}>
-                                    <Text style={s.keyLocalRetirada}>
-                                        Você deverá retirar e devolver o carrinho
-                                    </Text>
+                                                <Text style={s.valuePub}>
+                                                    {state.row.pub2.descritivo}
+                                                </Text>
+                                            </View>
 
-                                    <View style={s.linha}>
-                                        <Text style={s.keyLocalRetirada}>
-                                            no seguinte local:
-                                        </Text>
+                                            <View style={s.linha}>
+                                                <Text style={s.keyWpp}>
+                                                    WhatsApp:
+                                                </Text>
 
-                                        <Text style={{ ...s.valuePequeno, ...s.marginBotton, marginTop: '5px' }}>
-                                            {row.retiradaEntrega}
-                                        </Text>
+                                                <Text style={{ ...s.valueWpp, ...s.marginBotton }}>
+                                                    {state.row.pub2.numero}
+                                                </Text>
+                                            </View>
+
+                                            <View style={s.linha}>
+                                                <Text style={s.keyPub}>
+                                                    Data:
+                                                </Text>
+
+                                                <Text style={s.valuePub}>
+                                                    {state.row.data.descritivo}
+                                                </Text>
+                                            </View>
+
+                                            <View style={s.linha}>
+                                                <Text style={s.keyPub}>
+                                                    Horário:
+                                                </Text>
+
+                                                <Text style={{ ...s.valuePub, ...s.marginBotton }}>
+                                                    {state.row.horario.inicio} até {state.row.horario.fim}
+                                                </Text>
+                                            </View>
+
+                                            <View style={s.linhaQuebrada}>
+                                                <Text style={s.keyPub}>
+                                                    Local onde trabalhar:
+                                                </Text>
+
+                                                <Text style={{ ...s.valuePequeno, ...s.marginBotton }}>
+                                                    {state.row.ponto}
+                                                </Text>
+                                            </View>
+
+                                            <View style={s.linhaQuebrada}>
+                                                <Text style={s.keyPub}>
+                                                    Senha para abrir a porta:
+                                                </Text>
+
+                                                <Text style={{ ...s.valuePequeno, ...s.marginBotton }}>
+                                                    2414#
+                                                </Text>
+                                            </View>
+
+                                            <View style={s.linhaQuebrada}>
+                                                <Text style={s.keyLocalRetirada}>
+                                                    Você deverá retirar e devolver o carrinho
+                                                </Text>
+
+                                                <View style={s.linha}>
+                                                    <Text style={s.keyLocalRetirada}>
+                                                        no seguinte local:
+                                                    </Text>
+
+                                                    <Text style={{ ...s.valuePequeno, ...s.marginBotton, marginTop: '5px' }}>
+                                                        {state.row.retiradaEntrega}
+                                                    </Text>
+                                                </View>
+
+                                            </View>
+
+                                        </View>
+
+                                        {/* wrapper img */}
+                                        <View style={{ width: '36%', paddingLeft: '15px' }}>
+                                            <Image style={{ width: '100%', }} src={imgCarrinho}></Image>
+                                        </View>
                                     </View>
 
+                                    <Text style={{ ...s.footerDescricao, ...s.marginBotton }}>
+                                        <Text style={s.footerDescricaoBold}>NOTA:</Text> Caso não consiga cumprir essa designação, avise o mais breve possível ao Coordenador do TPE, o irmão <Text style={s.footerDescricaoBold}><Text style={s.grifado}>Ademar Carlos de Jesus</Text> (44) 99768-9940</Text>.
+                                    </Text>
+
+                                    <Text style={{ ...s.footerDescricao }}>
+                                        Por favor, após realizar o trabalho, preencha a pesquisa abaixo, <Text style={s.grifado}>você poderá acessá-la capturando o QR Code ou Clicando sobre ele</Text>.
+                                    </Text>
+
+                                    <Image style={{ marginTop: '7px', width: '105px', alignSelf: 'flex-end' }} src={imgQrCode}></Image>
+
                                 </View>
 
-                            </View>
 
-                            {/* wrapper img */}
-                            <View style={{ width: '36%', paddingLeft: '15px' }}>
-                                <Image style={{ width: '100%', }} src={imgCarrinho}></Image>
-                            </View>
-                        </View>
-
-                        <Text style={{ ...s.footerDescricao, ...s.marginBotton }}>
-                            <Text style={s.footerDescricaoBold}>NOTA:</Text> Caso não consiga cumprir essa designação, avise o mais breve possível ao Coordenador do TPE, o irmão <Text style={s.footerDescricaoBold}><Text style={s.grifado}>Ademar Carlos de Jesus</Text> (44) 99768-9940</Text>.
-                        </Text>
-
-                        <Text style={{ ...s.footerDescricao }}>
-                            Por favor, após realizar o trabalho, preencha a pesquisa abaixo, <Text style={s.grifado}>você poderá acessá-la capturando o QR Code ou Clicando sobre ele</Text>.
-                        </Text>
-
-                        <Image style={{ marginTop: '7px', width: '105px', alignSelf: 'flex-end' }} src={imgQrCode}></Image>
-
-                    </View>
-
-
-                </Page>
-            </Document>
-        </PDFViewer >
-    </>
+                            </Page>
+                        </Document>
+                    </PDFViewer >
+                </>
+            }
+        </>
     );
 };
 

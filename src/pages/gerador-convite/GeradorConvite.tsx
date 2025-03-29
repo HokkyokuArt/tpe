@@ -1,66 +1,65 @@
 import PrintIcon from '@mui/icons-material/Print';
-import { Box, Textarea, Typography } from "@mui/joy";
+import { Textarea, Typography } from "@mui/joy";
 import { Button } from "@mui/material";
-import { useState } from "react";
-import PdfTemplate from "../../components/PdfTemplate";
+import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import useLocalStorage, { LocalStorageKeys } from '../../hooks/useLocalStorage';
+import { pontosData } from '../pontos/pontos';
 
 export type State = {
   planilha: null | string,
-  openPdf: boolean,
-  index: number,
 };
 
 const initialState: State = {
   planilha: null,
-  openPdf: false,
-  index: 0,
 };
 
 function GeradorConvites() {
 
   const [localState, setLocalState] = useState(initialState);
+  const { get, put } = useLocalStorage();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!get<string>(LocalStorageKeys.PONTOS)) {
+      put(LocalStorageKeys.PONTOS, pontosData);
+    }
+  }, []);
+
 
   return (
     <>
-      {!localState.openPdf &&
-        <Box sx={{
-          padding: '50px 100px'
-        }}>
+      <Typography fontSize={50} sx={{ color: '#fefefe' }}>Gerador de convites TPE</Typography>
 
-          <Typography fontSize={50} sx={{ color: '#fefefe' }}>Gerador de convites TPE</Typography>
+      <Textarea
+        color="primary"
+        value={localState.planilha ?? ''}
+        onChange={(e) => setLocalState(prev => ({ ...prev, planilha: e.target.value }))}
+        disabled={false}
+        minRows={2}
+        size="lg"
+        variant="outlined"
+        placeholder="Insira os dados da planilha aqui..."
+      />
 
-          <Textarea
-            color="primary"
-            value={localState.planilha ?? ''}
-            onChange={(e) => setLocalState(prev => ({ ...prev, planilha: e.target.value }))}
-            disabled={false}
-            minRows={2}
-            size="lg"
-            variant="outlined"
-            placeholder="Insira os dados da planilha aqui..."
-          />
-
-          <Button
-            sx={{
-              borderRadius: '30px 0 0 30px',
-              position: 'fixed',
-              bottom: 20,
-              right: 0,
-            }}
-            variant="contained"
-            disabled={!localState.planilha}
-            color='primary'
-            onClick={() => setLocalState(prev => ({ ...prev, openPdf: true }))}
-          >
-            <PrintIcon sx={{ color: '#fff', fontSize: 45 }} />
-          </Button>
-        </Box>
-      }
-
-      {localState.openPdf &&
-        <PdfTemplate state={localState} setState={setLocalState} />
-      }
-
+      <Button
+        sx={{
+          borderRadius: '30px 0 0 30px',
+          position: 'fixed',
+          bottom: 20,
+          right: 0,
+        }}
+        variant="contained"
+        disabled={!localState.planilha}
+        color='primary'
+        onClick={() => navigate('/impressao', {
+          state: {
+            planilha: localState.planilha
+          }
+        })}
+      >
+        <PrintIcon sx={{ color: '#fff', fontSize: 45 }} />
+      </Button>
     </>
   );
 }
