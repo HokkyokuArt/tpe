@@ -4,8 +4,8 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Box, Button, Link, Typography } from '@mui/joy';
 import { Document, Font, Image, Line, Page, PDFViewer, StyleSheet, Svg, Text, View } from '@react-pdf/renderer';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { State } from './App';
-import { getRows } from './utils';
+import { State } from '../pages/gerador-convite/GeradorConvite';
+import { getRows } from '../utils/utils';
 
 const verde = '#037347';
 const cinza = '#7F7F7F';

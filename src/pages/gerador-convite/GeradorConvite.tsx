@@ -2,7 +2,7 @@ import PrintIcon from '@mui/icons-material/Print';
 import { Box, Textarea, Typography } from "@mui/joy";
 import { Button } from "@mui/material";
 import { useState } from "react";
-import PdfTemplate from "./PdfTemplate";
+import PdfTemplate from "../../components/PdfTemplate";
 
 export type State = {
   planilha: null | string,
@@ -16,7 +16,7 @@ const initialState: State = {
   index: 0,
 };
 
-function App() {
+function GeradorConvites() {
 
   const [localState, setLocalState] = useState(initialState);
 
@@ -65,4 +65,4 @@ function App() {
   );
 }
 
-export default App;
+export default GeradorConvites;
