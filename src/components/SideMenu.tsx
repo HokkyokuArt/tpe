@@ -1,6 +1,10 @@
+import { JSX } from "@emotion/react/jsx-runtime";
+import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import ExploreIcon from '@mui/icons-material/Explore';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import { CSSObject, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Theme } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
-import { router, routesData } from '../routes';
 import { topbarHeigh } from './Topbar';
 
 type Props = {
@@ -10,11 +14,30 @@ type Props = {
 export const drawerWidth = '240px';
 export const drawerWidthClosed = '65px';
 
-const SideMenu = ({ openMenu }: Props) => {
+const routesData: { label: string; icon: JSX.Element; path: string; }[] = [
+    {
+        path: 'gerarconvites',
+        label: 'Gerar convites',
+        icon: <AutoFixHighIcon />,
+    },
+    {
+        path: 'cadastrarpessoas',
+        label: 'Cadastrar pessoas',
+        icon: <GroupAddIcon />,
+    },
+    {
+        path: 'cadastrarpontos',
+        label: 'Cadastrar pontos',
+        icon: <AddLocationAltIcon />,
+    },
+    {
+        path: 'instrucoes',
+        label: 'Instruções',
+        icon: <ExploreIcon />,
+    },
+];
 
-    const itens = router.routes[0]
-        .children?.map(s => ({ path: s.path!, ...routesData[s.path!] }))
-        .filter(s => s.visible) ?? [];
+const SideMenu = ({ openMenu }: Props) => {
 
     const navigate = useNavigate();
 
@@ -22,7 +45,7 @@ const SideMenu = ({ openMenu }: Props) => {
         <CustomDrawer
             variant="permanent" open={openMenu}>
             <List sx={{ marginTop: topbarHeigh }}>
-                {itens.map((item) => (
+                {routesData.map((item) => (
                     <ListItem key={item.path} disablePadding sx={{ display: 'block' }}>
                         <ListItemButton
                             onClick={() => navigate(item.path)}
@@ -45,6 +68,8 @@ const SideMenu = ({ openMenu }: Props) => {
                                     {
                                         minWidth: 0,
                                         justifyContent: 'center',
+                                        display: 'flex',
+                                        alignItems: 'center',
                                     },
                                     openMenu
                                         ? {
