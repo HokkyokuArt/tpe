@@ -201,6 +201,25 @@ const PdfTemplate = () => {
         });
     }, []);
 
+    const next = () => {
+        handleChangePage(+1);
+    };
+
+    const previous = () => {
+        handleChangePage(-1);
+    };
+
+    const handleChangePage = (count: number) => {
+        setState(prev => {
+            const index = prev.index + count;
+            return {
+                ...prev,
+                index,
+                row: prev.rows[index]
+            };
+        });
+    };
+
     return (
         <>
             {!state.row ?
@@ -278,7 +297,7 @@ const PdfTemplate = () => {
                                 }}
                                 disabled={state.index === 0}
                                 color='success'
-                                onClick={() => setState(prev => ({ ...prev, index: prev.index - 1 }))}
+                                onClick={previous}
                             >
                                 <NavigateBeforeIcon sx={{ color: '#fff', fontSize: 45 }} />
                             </Button>
@@ -300,7 +319,7 @@ const PdfTemplate = () => {
                                 }}
                                 disabled={state.index === state.rows.length - 1}
                                 color='success'
-                                onClick={() => setState(prev => ({ ...prev, index: prev.index + 1 }))}>
+                                onClick={next}>
 
                                 <NavigateNextIcon sx={{ color: '#fff', fontSize: 45 }} />
                             </Button>
